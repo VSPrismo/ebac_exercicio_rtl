@@ -1,15 +1,24 @@
-import Post from "./components/Post";
+import React from 'react';
+import { render, screen, fireEvent } from '@testing-library/react';
+import App from './App';
 
-import styles from './App.module.css';
+describe('App', () => {
+  it('insere dois comentários corretamente', () => {
+    render(<App />);
 
-function App() {
-  return (
-    <div className={styles.app}>
-      <Post imageUrl="https://www.orangeboxminiaturas.com.br/img/products/batmovel-1989-figura-batman-em-metal-jada-toys-1-24-jad-98260_1_1000.jpg">
-        Olha só que legal minha miniatura do Batmóvel.
-      </Post>
-    </div>
-  );
-}
+    const comentarioInput = screen.getByTestId('comentario-input');
+    const submitButton = screen.getByTestId('submit-button');
 
-export default App;
+    fireEvent.change(comentarioInput, { target: { value: 'Primeiro comentário' } });
+    fireEvent.click(submitButton);
+
+    fireEvent.change(comentarioInput, { target: { value: 'Segundo comentário' } });
+    fireEvent.click(submitButton);
+
+    const comentarios = screen.getAllByTestId('comentario');
+    expect(comentarios).toHaveLength(2);
+    expect(comentarios[0].textContent).toBe('Primeiro comentário');
+    expect(comentarios[1].textContent).toBe('Segundo comentário');
+  });
+});
+
